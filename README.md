@@ -17,3 +17,8 @@ uv add deepagents tavily-python python-dotenv
     - gemini-3-pro-image-preview (Nano Banana pro)
     - gemini-2.5-flash-image (Nano Banana)
     - gemini-pro-latest (point to gemini-2.5-pro)
+
+- openai:gpt-5.4
+- anthropic:claude-sonnet-4-6
+- openrouter:anthropic/claude-sonnet-4-6
+- ollama:devstral-2
