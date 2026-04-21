@@ -1,0 +1,3 @@
+[agent]
+name = "research-agent"
+model = "google_genai:gemini-3-flash-preview"
