@@ -1,0 +1,3 @@
+[agent]
+name = "coding-ml-agent"
+model = "openai:glm-5-turbo"
