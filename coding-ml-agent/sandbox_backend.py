@@ -17,7 +17,7 @@ Requires: pip install agent-sandbox
 """
 
 import os
-import base64
+import uuid
 from pathlib import PurePosixPath
 
 from deepagents.backends.protocol import (
@@ -30,6 +30,8 @@ from deepagents.backends.protocol import (
     GlobResult,
     GrepResult,
     ExecuteResponse,
+    FileDownloadResponse,
+    FileUploadResponse,
 )
 from deepagents.backends.sandbox import BaseSandbox
 
@@ -52,6 +54,7 @@ class AIOSandboxBackend(BaseSandbox):
         """
         self.client = Sandbox(base_url=base_url)
         self.base_url = base_url
+        self._id = f"aio-sandbox-{uuid.uuid4().hex[:8]}"
 
         # Get sandbox context (home directory, etc.)
         try:
@@ -60,7 +63,12 @@ class AIOSandboxBackend(BaseSandbox):
         except Exception:
             self.home_dir = "/home/gem"
 
-    def execute(self, command: str, timeout: int = 120, **kwargs) -> ExecuteResponse:
+    @property
+    def id(self) -> str:
+        """Unique identifier for this sandbox instance."""
+        return self._id
+
+    def execute(self, command: str, *, timeout: int | None = None) -> ExecuteResponse:
         """Execute a shell command in the sandbox.
 
         Args:
@@ -82,29 +90,78 @@ class AIOSandboxBackend(BaseSandbox):
                 exit_code=1,
             )
 
+    def upload_files(self, files: list[tuple[str, bytes]]) -> list[FileUploadResponse]:
+        """Upload files to the sandbox.
+
+        Args:
+            files: List of (sandbox_path, content_bytes) tuples.
+
+        Returns:
+            List of FileUploadResponse for each file.
+        """
+        responses = []
+        for path, content in files:
+            try:
+                # Ensure parent directory exists
+                parent = str(PurePosixPath(path).parent)
+                if parent != "/":
+                    self.client.shell.exec_command(command=f"mkdir -p {parent}")
+                # Write content (decode bytes to string for text files)
+                text = content.decode("utf-8", errors="replace")
+                self.client.file.write_file(file=path, content=text)
+                responses.append(FileUploadResponse(path=path))
+            except Exception as e:
+                responses.append(FileUploadResponse(path=path, error="permission_denied"))
+        return responses
+
+    def download_files(self, paths: list[str]) -> list[FileDownloadResponse]:
+        """Download files from the sandbox.
+
+        Args:
+            paths: List of file paths in the sandbox.
+
+        Returns:
+            List of FileDownloadResponse with content bytes.
+        """
+        responses = []
+        for path in paths:
+            try:
+                res = self.client.file.read_file(file=path)
+                content = (res.data.content if res.data else "").encode("utf-8")
+                responses.append(FileDownloadResponse(path=path, content=content))
+            except Exception:
+                responses.append(FileDownloadResponse(path=path, error="file_not_found"))
+        return responses
+
+    # -----------------------------------------------------------------------
+    # Convenience methods (not part of BaseSandbox interface)
+    # -----------------------------------------------------------------------
+
     def upload(self, local_path: str, sandbox_path: str) -> None:
-        """Upload a local file to the sandbox.
+        """Upload a local file to the sandbox (convenience method).
 
         Args:
             local_path: Path to the local file.
             sandbox_path: Destination path in the sandbox.
         """
-        with open(local_path, "r", encoding="utf-8") as f:
+        with open(local_path, "rb") as f:
             content = f.read()
-        self.client.file.write_file(file=sandbox_path, content=content)
+        self.upload_files([(sandbox_path, content)])
 
     def download(self, sandbox_path: str, local_path: str) -> None:
-        """Download a file from the sandbox to local filesystem.
+        """Download a file from the sandbox to local filesystem (convenience method).
 
         Args:
             sandbox_path: Path to the file in the sandbox.
             local_path: Destination path on local filesystem.
         """
-        res = self.client.file.read_file(file=sandbox_path)
-        content = res.data.content if res.data else ""
-        os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        with open(local_path, "w", encoding="utf-8") as f:
-            f.write(content)
+        responses = self.download_files([sandbox_path])
+        if responses and responses[0].content is not None:
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+            with open(local_path, "wb") as f:
+                f.write(responses[0].content)
+        else:
+            raise FileNotFoundError(f"Could not download {sandbox_path}")
 
     def setup_environment(self, packages: list[str] | None = None) -> str:
         """Install Python packages in the sandbox.
