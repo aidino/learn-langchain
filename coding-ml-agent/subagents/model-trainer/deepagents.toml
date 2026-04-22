@@ -1,0 +1,3 @@
+[agent]
+name = "model-trainer"
+description = "ML Engineer — trains, evaluates, and tunes scikit-learn classification models. Reads processed data, compares baselines via cross-validation, tunes hyperparameters, and generates Kaggle submission files."
