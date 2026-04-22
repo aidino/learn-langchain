@@ -1,0 +1,3 @@
+[agent]
+name = "data-analyst"
+description = "Senior Data Scientist — performs EDA, data cleaning, feature engineering on tabular datasets. Executes Python code in sandbox using pandas and numpy. Returns structured summary reports."
