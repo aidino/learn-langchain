@@ -1,0 +1,34 @@
+[project]
+name = "rl-memory-retrieval"
+version = "0.1.0"
+description = "A generalizable pipeline that ingests any knowledge source, trains a PPO-based RL retriever, and answers questions."
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.40.0",
+    "gymnasium>=0.29.1",
+    "stable-baselines3>=2.3.2",
+    "numpy>=1.26.4",
+    "pandas>=2.2.2",
+    "scikit-learn>=1.5.1",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "python-dotenv>=1.0.0",
+    "click>=8.0",
+    "tqdm>=4.66.4",
+    "pyyaml>=6.0",
+    "markitdown[all]",
+    "crawl4ai",
+]
+
+[project.scripts]
+rl-retriever = "rl_memory_retrieval.cli:cli"
+
+[project.optional-dependencies]
+extraction = ["langextract"]
+local = ["sentence-transformers"]
+plot = ["matplotlib>=3.9.0"]
+dev = ["pytest", "pytest-cov"]
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"

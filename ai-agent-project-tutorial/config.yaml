@@ -1,0 +1,38 @@
+# RL Memory Retrieval — Default Configuration
+source: null                    # URL or file path (required via CLI)
+output_dir: ./model_output
+
+embeddings:
+  backend: openai               # "openai" or "local"
+  model: text-embedding-3-small # or "all-MiniLM-L6-v2"
+  batch_size: 64
+
+extraction:
+  enabled: false                # langextract metadata extraction
+  instruction: "Extract entities, topics, and key facts"
+
+chunking:
+  chunk_size: 300               # characters
+  chunk_overlap: 50             # characters
+
+query_generation:
+  queries_per_chunk: 3
+  model: gpt-4o-mini
+
+training:
+  total_timesteps: 12000
+  learning_rate: 3e-4
+  n_steps: 256
+  batch_size: 64
+  gamma: 0.99
+  gae_lambda: 0.95
+  ent_coef: 0.01
+  clip_range: 0.2
+  top_k_candidates: 8
+  train_split: 0.70
+  val_split: 0.15
+  # test_split: 0.15 (remainder)
+
+evaluation:
+  sample_size: 20               # queries for LLM-judged QA eval
+  use_llm_judge: true
