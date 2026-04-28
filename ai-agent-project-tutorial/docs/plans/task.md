@@ -2,10 +2,10 @@
 
 | # | Task | Status |
 |---|------|--------|
-| 1 | Project Scaffolding & Config | in_progress |
-| 2 | Ingestion Layer (Loader + Chunker) | not_started |
-| 3 | Embeddings Layer | not_started |
-| 4 | Optional Metadata Extractor | not_started |
+| 1 | Project Scaffolding & Config | done |
+| 2 | Ingestion Layer (Loader + Chunker) | done |
+| 3 | Embeddings Layer | done |
+| 4 | Optional Metadata Extractor | in_progress |
 | 5 | Query Generation | not_started |
 | 6 | RL Feature Engineering | not_started |
 | 7 | Gymnasium RL Environment | not_started |
