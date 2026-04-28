@@ -15,6 +15,22 @@ Traditional RAG systems rely on cosine similarity to retrieve relevant chunks. T
 - **Optional metadata extraction** — Uses `langextract` for entity/topic enrichment
 - **CLI + Python API** — Use as a command-line tool or import as a library
 
+### Project Status
+
+All core modules have been fully implemented according to the 12-task development plan:
+- ✅ Project Scaffolding & Config
+- ✅ Ingestion Layer (Loader + Chunker)
+- ✅ Embeddings Layer
+- ✅ Optional Metadata Extractor
+- ✅ Query Generation
+- ✅ RL Feature Engineering
+- ✅ Gymnasium RL Environment
+- ✅ PPO Trainer
+- ✅ Retrieval & Evaluation
+- ✅ Pipeline Orchestrator
+- ✅ CLI Interface
+- ✅ Integration Test & Final Verification
+
 ## Architecture
 
 ```
