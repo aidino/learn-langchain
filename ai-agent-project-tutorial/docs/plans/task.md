@@ -5,8 +5,8 @@
 | 1 | Project Scaffolding & Config | done |
 | 2 | Ingestion Layer (Loader + Chunker) | done |
 | 3 | Embeddings Layer | done |
-| 4 | Optional Metadata Extractor | in_progress |
-| 5 | Query Generation | not_started |
+| 4 | Optional Metadata Extractor | done |
+| 5 | Query Generation | in_progress |
 | 6 | RL Feature Engineering | not_started |
 | 7 | Gymnasium RL Environment | not_started |
 | 8 | PPO Trainer | not_started |
